@@ -1,0 +1,174 @@
+  <html>
+<head>
+	 <title>Bootstrap Example</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+  
+  </head>
+   <center> <h1><b>User information</b></h1></center>
+ <tr>
+ <td> <button type="button" class="btn btn-primary  btn-raised  btn-flat" data-toggle="modal" data-target="#userModal">Create</button>
+    </td>
+    </tr>
+    <br><br>
+<table class="table" id="table-data">  <tr>
+    <thead>
+<tr>
+    <th>firstName</th>
+     <th>LastName</th>
+    <th>Email</th>
+     <th>Mobile No.</th>
+    <th>Update</th>
+     <th>Delete</th>
+  </tr>
+</thead>
+<!--The users list-->
+<% data.forEach(function(e){ %>
+   <tbody id="filter-data">
+ <tr>
+   <td><%=e.firstname %></td>
+   <td><%=e.lastname %></td>
+   <td><%=e.email %></td>
+     <td><%=e.mobile %></td>
+    <!-- Button --> 
+   <td>
+   
+       <button type="button" class="btn btn-success btn-raised  btn-flat" data-toggle="modal" data-target="#editModal<%=e._id%>">Edit</button>
+     
+   </td>
+  <td>
+      <form id="delete" action="/<%=e._id%>?_method=delete" method="POST">
+        <button type="submit" class="btn btn-danger btn-raised  btn-flat">Delete</button>
+      </form>
+  </td>
+ </tr>
+   <!-- edit Modal -->
+   <form id="edit_user"  method="POST" >
+  <div class="modal fade" id="editModal<%=e._id%>" role="dialog">
+    <div class="modal-dialog">
+    
+      <!-- Modal content-->
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" id="create_userbtn" data-dismiss="modal">&times;</button>
+          <h4 class="modal-title">Edit User</h4>
+        </div>
+        <div class="modal-body">
+           
+      <div class="form-group has-feedback">
+        <input type="text" class="form-control" name="data[firstname]" id="data[firstname]" placeholder="FirstName " value="<%=e.firstname %>">
+        <span class="glyphicon glyphicon-user form-control-feedback"></span>
+      </div>
+       <div class="form-group has-feedback">
+        <input type="text" class="form-control" name="data[lastname]" id="data[lastname]"  placeholder="LastName " value="<%=e.lastname %>">
+        <span class="glyphicon glyphicon-user form-control-feedback"></span>
+      </div>
+      <div class="form-group has-feedback">
+        <input type="text" class="form-control" name="data[email]" id="data[email]"  placeholder="Email" value="<%=e.email %>">
+        <span class="glyphicon glyphicon-envelope form-control-feedback"></span>
+      </div>
+       <div class="form-group has-feedback">
+        <input type="text" class="form-control" name="data[mobile]" id="data[mobile]"  placeholder="Email" value="<%=e.mobile %>">
+        <span class="glyphicon glyphicon-phone form-control-feedback"></span>
+      </div>
+      
+      <div class="row">
+        
+   
+        </div>
+        <div class="modal-footer">
+          <input type="button" name="submit" class="btn btn-success btn-raised btn-flat"  value="update" onclick="update_data('<%=e._id%>?_method=PUT')" >
+          <button type="button" class="btn btn-primary btn-raised btn-flat" data-dismiss="modal" id="close">Cancel
+          </button>
+           
+        </div>
+      </div>
+       </form>
+        <!-- edit Modal close -->
+<% }); %>
+    </tbody>
+</table>
+    <!-- user Modal -->
+<form id="create_user" >
+  <div class="modal fade" id="userModal" role="dialog">
+    <div class="modal-dialog modal-lg">
+    
+      <!-- Modal content-->
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" id="create_userbtn" data-dismiss="modal">&times;</button>
+          <h4 class="modal-title">Create User</h4>
+        </div>
+        <div class="modal-body">
+           
+      <div class="form-group has-feedback">
+        <input type="text" class="form-control" name="data[firstname]" id="data[firstname]" placeholder="FirstName ">
+        <span class="glyphicon glyphicon-user form-control-feedback"></span>
+      </div>
+       <div class="form-group has-feedback">
+        <input type="text" class="form-control" name="data[lastname]" id="data[lastname]"  placeholder="LastName ">
+        <span class="glyphicon glyphicon-user form-control-feedback"></span>
+      </div>
+      <div class="form-group has-feedback">
+        <input type="text" class="form-control" name="data[email]" id="data[email]"  placeholder="Email">
+        <span class="glyphicon glyphicon-envelope form-control-feedback"></span>
+      </div>
+      <div class="form-group has-feedback">
+        <input type="text" class="form-control" name="data[mobile]" id="data[mobile]"  placeholder="Mobile">
+        <span class="glyphicon glyphicon-phone form-control-feedback"></span>
+      </div>
+      <div class="row">
+        </div>
+        <div class="modal-footer">
+          <button type="button" name="submit" class="btn btn-success btn-raised btn-flat"   onclick="save_data()" >Create</button>
+          <button type="button" class="btn btn-primary btn-raised btn-flat" id="close" data-dismiss="modal">Cancel
+          </button>
+           
+        </div>
+      </div>
+       </form>
+      
+       
+       <script>
+           
+         function save_data()
+         {
+      
+       var form_data =$("#create_user").serialize();
+     
+       $.ajax({
+
+        url:'/',
+        type:"post",
+        data:form_data,
+        success:function(res){
+        
+            $("#close")[0].click();
+           $('#table-data').load(' #table-data');
+           
+        }
+       });
+     }
+             
+         function update_data(id)
+         {
+       
+       var form_data =$("#edit_user").serialize();
+     
+       $.ajax({
+
+        url:'/'+id, 
+        type:"post",
+        data:form_data,
+        success:function(res){
+            $("#close")[0].click();
+           $('#table-data').load(' #table-data');
+           
+        }
+       });
+     }
+       </script>
+        </html>
